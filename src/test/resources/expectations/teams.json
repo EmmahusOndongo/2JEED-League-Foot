@@ -1,0 +1,19 @@
+[
+  {
+    "id": "22f8841b-c1c3-49e2-9e08-8884ca1ff9c0",
+    "name": "Tours",
+    "description": "La meilleure équipe !"
+  },
+  {
+    "id": "5b6bbd96-3b0c-4b34-aeaf-e001d0e1f0da",
+    "name": "Nantes"
+  },
+  {
+    "id": "69d35007-4e6f-4799-a9df-7df6743020f3",
+    "name": "Angers"
+  },
+  {
+    "id": "81138ce0-01dd-4e1b-a824-94fef238ac12",
+    "name": "Le Mans"
+  }
+]
