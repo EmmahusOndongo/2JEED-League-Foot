@@ -34,7 +34,12 @@ public class WebSecurityConfigurer {
                 .roles("USER", "ADMIN")
                 .build();
 
-        return new InMemoryUserDetailsManager(user, admin);
+        UserDetails memberLeague = User.withUsername("member")
+                .password(passwordEncoder.encode("memberpass"))
+                .roles("USER", "MEMBER-LEAGUE")
+                .build();
+
+        return new InMemoryUserDetailsManager(user, admin, memberLeague);
     }
 
     @Bean
@@ -50,4 +55,5 @@ public class WebSecurityConfigurer {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
