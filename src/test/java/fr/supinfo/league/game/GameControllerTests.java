@@ -66,6 +66,7 @@ public class GameControllerTests {
         game.setHomeTeamId(UUID.fromString("22f8841b-c1c3-49e2-9e08-8884ca1ff9c0"));
         game.setVisitorTeamId(UUID.fromString("5b6bbd96-3b0c-4b34-aeaf-e001d0e1f0da"));
         game.setStartTime(LocalTime.of(15, 15, 15));
+        game.setEndTime(LocalTime.of(18, 40, 10));
         this.gameRepository.save(game);
 
         // When
@@ -136,6 +137,7 @@ public class GameControllerTests {
         game.setHomeTeamId(UUID.fromString("22f8841b-c1c3-49e2-9e08-8884ca1ff9c0"));
         game.setVisitorTeamId(UUID.fromString("5b6bbd96-3b0c-4b34-aeaf-e001d0e1f0da"));
         game.setStartTime(LocalTime.of(15, 15, 15));
+        game.setEndTime(LocalTime.of(21, 45, 55));
         this.gameRepository.save(game);
 
 
@@ -150,6 +152,7 @@ public class GameControllerTests {
         otherGame.setHomeTeamId(UUID.fromString("69d35007-4e6f-4799-a9df-7df6743020f3"));
         otherGame.setVisitorTeamId(UUID.fromString("81138ce0-01dd-4e1b-a824-94fef238ac12"));
         otherGame.setStartTime(LocalTime.of(18, 17, 16));
+        otherGame.setEndTime(LocalTime.of(20, 30, 25));
         this.gameRepository.save(otherGame);
         // When
         ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.get(TESTED_URL).param("date", matchDay.getDate().toString()));
