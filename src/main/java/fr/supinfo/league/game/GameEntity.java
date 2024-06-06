@@ -18,6 +18,7 @@ public class GameEntity {
     private UUID id;
     private String description;
     private LocalTime startTime;
+    private LocalTime endTime;
     private UUID matchDayId;
     private UUID homeTeamId;
     private UUID visitorTeamId;
