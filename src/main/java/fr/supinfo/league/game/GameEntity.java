@@ -22,4 +22,7 @@ public class GameEntity {
     private UUID matchDayId;
     private UUID homeTeamId;
     private UUID visitorTeamId;
+
+    private boolean isReported;
+    private String reportReason;
 }

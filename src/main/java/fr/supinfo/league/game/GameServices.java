@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -40,5 +41,19 @@ public class GameServices {
         GameEntity gameEntity = this.gameMapper.dtoToEntity(game);
         GameEntity saved = this.gameRepository.save(gameEntity);
         return this.gameMapper.entityToDto(saved);
+    }
+    public GameDto reportMatch(UUID gameId, String reason) throws Exception {
+        GameEntity game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new Exception("Game not found"));
+
+        if (game.getStartTime().isBefore(LocalTime.now())) {
+            throw new Exception("Game has already started and cannot be reported");
+        }
+
+        game.setReported(true);
+        game.setReportReason(reason);
+        gameRepository.save(game);
+
+        return gameMapper.entityToDto(game);
     }
 }

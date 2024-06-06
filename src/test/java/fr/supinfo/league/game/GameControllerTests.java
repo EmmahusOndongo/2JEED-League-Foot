@@ -162,4 +162,68 @@ public class GameControllerTests {
         resultActions.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expected));
     }
+
+    @WithMockUser(roles = {"MEMBER-LEAGUE"})
+    @Test
+    void whenReportGame_givenMemberLeagueUser() throws Exception {
+        // Given
+        MatchDayEntity matchDay = new MatchDayEntity();
+        matchDay.setId(UUID.fromString("ac05477e-60e0-4c07-9455-6929c1b4c169"));
+        matchDay.setDate(LocalDate.now().plusDays(5));
+        this.matchDayRepository.save(matchDay);
+
+        GameEntity game = new GameEntity();
+        game.setId(UUID.fromString("22f8841b-c1c3-49e2-9e08-8884ca1ff9c0"));
+        game.setDescription("Good game");
+        game.setMatchDayId(matchDay.getId());
+        game.setHomeTeamId(UUID.fromString("22f8841b-c1c3-49e2-9e08-8884ca1ff9c0"));
+        game.setVisitorTeamId(UUID.fromString("5b6bbd96-3b0c-4b34-aeaf-e001d0e1f0da"));
+        game.setStartTime(LocalTime.of(15, 15, 15));
+        this.gameRepository.save(game);
+
+        Path input = Path.of("src", "test", "resources", "inputs", "report-game.json");
+        String body = Files.readString(input);
+
+        // When
+        ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(TESTED_URL + "/{gameId}/report", game.getId())
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        String expected = Files.readString(Path.of("src", "test", "resources", "expectations", "reported-game.json"));
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(expected));
+    }
+
+    @Test
+    @WithMockUser
+    void whenReportGame_givenBasicUser() throws Exception {
+        // Given
+        MatchDayEntity matchDay = new MatchDayEntity();
+        matchDay.setId(UUID.fromString("ac05477e-60e0-4c07-9455-6929c1b4c169"));
+        matchDay.setDate(LocalDate.now().plusDays(5));
+        this.matchDayRepository.save(matchDay);
+
+        GameEntity game = new GameEntity();
+        game.setId(UUID.fromString("22f8841b-c1c3-49e2-9e08-8884ca1ff9c0"));
+        game.setDescription("Good game");
+        game.setMatchDayId(matchDay.getId());
+        game.setHomeTeamId(UUID.fromString("22f8841b-c1c3-49e2-9e08-8884ca1ff9c0"));
+        game.setVisitorTeamId(UUID.fromString("5b6bbd96-3b0c-4b34-aeaf-e001d0e1f0da"));
+        game.setStartTime(LocalTime.of(15, 15, 15));
+        this.gameRepository.save(game);
+
+        Path input = Path.of("src", "test", "resources", "inputs", "report-game.json");
+        String body = Files.readString(input);
+
+        // When
+        ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(TESTED_URL + "/{gameId}/report", game.getId())
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        resultActions.andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
 }
