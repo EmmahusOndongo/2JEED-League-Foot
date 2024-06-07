@@ -234,22 +234,23 @@ public class GameControllerTests {
     void whenSuspendGame_givenMemberLeague() throws Exception {
         // Given
         MatchDayEntity matchDay = new MatchDayEntity();
-        matchDay.setId(UUID.fromString("ac05477e-60e0-4c07-9455-6929c1b4c169"));
+        matchDay.setId(UUID.randomUUID());
         matchDay.setDate(LocalDate.now().plusDays(5));
         this.matchDayRepository.save(matchDay);
 
-        UUID gameId = UUID.fromString("ac05477e-60e0-4c07-9455-6929c1b4c169"); // Fixed UUID
+        UUID gameId = UUID.randomUUID();
         GameEntity game = new GameEntity();
         game.setId(gameId);
-        game.setDescription("Game to be suspended");
-        game.setStartTime(LocalTime.of(14, 15, 15));
-        game.setEndTime(LocalTime.of(21, 45, 55));
+        game.setDescription("Game for incorrect start time test");
+        game.setStartTime(LocalTime.of(15, 15, 15));
+        game.setEndTime(LocalTime.of(18, 40, 10));
         game.setMatchDayId(matchDay.getId());
-        game.setHomeTeamId(UUID.fromString("22f8841b-c1c3-49e2-9e08-8884ca1ff9c0"));
-        game.setVisitorTeamId(UUID.fromString("5b6bbd96-3b0c-4b34-aeaf-e001d0e1f0da"));
+        game.setHomeTeamId(UUID.randomUUID());
+        game.setVisitorTeamId(UUID.randomUUID());
         this.gameRepository.save(game);
 
-        String reason = "{\"reason\":\"Inclement weather\"}";
+        // Load incorrect new start time from file
+        String reason = Files.readString(Path.of("src", "test", "resources", "inputs", "suspend-game.json"));
 
         // When
         ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(TESTED_URL + "/" + gameId + "/suspend")
