@@ -42,7 +42,6 @@ public class GameControllerTests {
     @Autowired
     private WebApplicationContext context;
 
-
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders
@@ -161,5 +160,61 @@ public class GameControllerTests {
         String expected = Files.readString(Path.of("src", "test", "resources", "expectations", "games-all.json"));
         resultActions.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expected));
+    }
+
+    @WithMockUser(roles = {"MEMBER-LEAGUE"})
+    @Test
+    void whenReportMatch_givenMemberLeague() throws Exception {
+        // Given
+        UUID gameId = UUID.randomUUID(); // Generate a random UUID
+        GameEntity game = new GameEntity();
+        game.setId(gameId); // Use the same UUID for saving
+        game.setDescription("Game to be reported");
+        game.setStartTime(LocalTime.now().plusHours(1)); // Match not started
+        game.setEndTime(LocalTime.now().plusHours(3));
+        game.setMatchDayId(UUID.randomUUID());
+        game.setHomeTeamId(UUID.randomUUID());
+        game.setVisitorTeamId(UUID.randomUUID());
+        this.gameRepository.save(game);
+
+        String reason = "{\"reason\":\"Inclement weather\"}";
+
+        // When
+        ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(TESTED_URL + "/" + gameId + "/report")
+                .content(reason)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.isPostponed").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.postponedReason").value("Inclement weather"));
+    }
+
+    @WithMockUser(roles = {"MEMBER-LEAGUE"})
+    @Test
+    void whenReportMatch_givenMemberLeague_matchAlreadyStarted() throws Exception {
+        // Given
+        UUID gameId = UUID.randomUUID(); // Generate a random UUID
+        GameEntity game = new GameEntity();
+        game.setId(gameId); // Use the same UUID for saving
+        game.setDescription("Game already started");
+        game.setStartTime(LocalTime.now().minusHours(1)); // Match started
+        game.setEndTime(LocalTime.now().plusHours(1));
+        game.setMatchDayId(UUID.randomUUID());
+        game.setHomeTeamId(UUID.randomUUID());
+        game.setVisitorTeamId(UUID.randomUUID());
+        this.gameRepository.save(game);
+
+        String reason = "{\"reason\":\"Inclement weather\"}";
+
+        // When
+        ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(TESTED_URL + "/" + gameId + "/report")
+                .content(reason)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

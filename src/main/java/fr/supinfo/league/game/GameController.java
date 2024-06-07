@@ -28,7 +28,7 @@ public class GameController {
 
     @PutMapping("/{gameId}/report")
     @RolesAllowed("MEMBER-LEAGUE")
-    public GameDto reportGame(@PathVariable UUID gameId, @RequestBody String reason) {
-        return this.gameServices.reportGame(gameId, reason);
+    public GameDto reportGame(@PathVariable UUID gameId, @RequestBody ReportReasonDto reportReasonDto) {
+        return this.gameServices.reportGame(gameId, reportReasonDto.reason());
     }
 }
