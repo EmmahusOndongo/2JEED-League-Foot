@@ -2,6 +2,8 @@ package fr.supinfo.league.game;
 
 import fr.supinfo.league.game.comment.CommentDto;
 import fr.supinfo.league.game.comment.CommentEntity;
+//import fr.supinfo.league.game.event.EventDto;
+//import fr.supinfo.league.game.event.EventEntity;
 import fr.supinfo.league.game.comment.CommentRepository;
 import fr.supinfo.league.season.matchday.MatchDayServices;
 import fr.supinfo.league.team.TeamServices;
@@ -16,8 +18,8 @@ import java.util.*;
 @Service
 public class GameServices {
     private final GameRepository gameRepository;
-    private final CommentRepository commentRepository;
-    private final GameMapper gameMapper;
+    private final CommentRepository commentRepository;// private final EventRepository eventRepository;
+    private final GameMapper gameMapper;// private final EventMapper eventMapper;
 
     private final MatchDayServices matchDayServices;
     private final TeamServices teamServices;
@@ -130,4 +132,16 @@ public class GameServices {
             throw new RuntimeException("Game not found with ID: " + gameId);
         }
     }
+
+    /*public EventDto addEventToGame(UUID gameId, EventDto eventDto) {
+        GameEntity game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+
+        EventEntity eventEntity = eventMapper.dtoToEntity(eventDto);
+        eventEntity.setGame(game);
+
+        eventEntity = eventRepository.save(eventEntity);
+
+        return eventMapper.entityToDto(eventEntity);
+    }*/
 }

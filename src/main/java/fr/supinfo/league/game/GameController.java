@@ -1,6 +1,7 @@
 package fr.supinfo.league.game;
 
 import fr.supinfo.league.game.comment.CommentDto;
+//import fr.supinfo.league.game.event.EventDto;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -55,4 +56,10 @@ public class GameController {
     public CommentDto addCommentToGame(@PathVariable UUID gameId, @RequestBody CommentDto commentDto) {
         return this.gameServices.addCommentToGame(gameId, commentDto);
     }
+
+    /*@RolesAllowed({"ADMIN", "JOURNALIST"})
+    @PostMapping("/{gameId}/events")
+    public EventDto addEventToGame(@PathVariable UUID gameId, @RequestBody EventDto eventDto) {
+        return this.gameServices.addEventToGame(gameId, eventDto);
+    }*/
 }
