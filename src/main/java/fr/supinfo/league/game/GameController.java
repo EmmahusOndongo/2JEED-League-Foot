@@ -37,10 +37,11 @@ public class GameController {
     @RolesAllowed("MEMBER-LEAGUE")
     public GameDto suspendGame(@PathVariable UUID gameId, @RequestBody SuspendReasonDto suspendReasonDto) {
         return this.gameServices.suspendGame(gameId, suspendReasonDto.reason());
-    @RolesAllowed({"ADMIN", "JOURNALIST"})
+    }
     @PutMapping("/{gameId}/start-time")
-    public GameDto selectStartTime(@PathVariable UUID gameId, @RequestBody LocalTime newTime) {
-        return this.gameServices.selectStartTime(gameId, newTime);
+    @RolesAllowed({"ADMIN", "JOURNALIST"})
+    public GameDto selectStartTime(@PathVariable UUID gameId, @RequestBody TimeDto newTimeDto) {
+        return this.gameServices.selectStartTime(gameId, LocalTime.parse(newTimeDto.getNewTime()));
     }
 
     @RolesAllowed({"ADMIN", "JOURNALIST"})
