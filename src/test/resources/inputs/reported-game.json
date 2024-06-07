@@ -8,7 +8,5 @@
   "visitorTeamId": "5b6bbd96-3b0c-4b34-aeaf-e001d0e1f0da",
   "hasStarted": false,
   "isPostponed": true,
-  "postponedReason": "Inclement weather",
-  "isSuspended": false,
-  "suspendReason": null
+  "postponedReason": "Inclement weather"
 }
