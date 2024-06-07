@@ -138,7 +138,6 @@ public class GameControllerJournalistTests {
         this.gameRepository.save(game);
 
         String incorrectStartTime = Files.readString(Path.of("src", "test", "resources", "inputs", "incorrect-game-start-time-update.json"));
-
         // When
         ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(TESTED_URL + "/" + gameId + "/start-time")
                 .content(incorrectStartTime)
