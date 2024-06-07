@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RequestMapping("/games")
@@ -19,10 +20,20 @@ public class GameController {
         return this.gameServices.getGames(date);
     }
 
-    // configure security roles using annotations https://www.baeldung.com/spring-security-method-security
     @RolesAllowed({"ADMIN"})
     @PostMapping
     public GameDto createGame(@RequestBody GameDto game) {
         return this.gameServices.createGame(game);
+    }
+
+    @PutMapping("/{gameId}/report")
+    @RolesAllowed("MEMBER-LEAGUE")
+    public GameDto reportGame(@PathVariable UUID gameId, @RequestBody ReportReasonDto reportReasonDto) {
+        return this.gameServices.reportGame(gameId, reportReasonDto.reason());
+    }
+    @PutMapping("/{gameId}/suspend")
+    @RolesAllowed("MEMBER-LEAGUE")
+    public GameDto suspendGame(@PathVariable UUID gameId, @RequestBody SuspendReasonDto suspendReasonDto) {
+        return this.gameServices.suspendGame(gameId, suspendReasonDto.reason());
     }
 }

@@ -22,4 +22,13 @@ public class GameEntity {
     private UUID matchDayId;
     private UUID homeTeamId;
     private UUID visitorTeamId;
+    private boolean hasStarted;
+    private boolean isPostponed;
+    private String postponedReason;
+    private boolean isSuspended;
+    private String suspendReason;
+
+    public boolean hasStarted() {
+        return hasStarted;
+    }
 }
