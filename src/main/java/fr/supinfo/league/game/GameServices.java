@@ -50,6 +50,36 @@ public class GameServices {
         return this.gameMapper.entityToDto(saved);
     }
 
+    public GameDto reportGame(UUID gameId, String reason) {
+        GameEntity game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+
+        if (game.hasStarted()) {
+            throw new IllegalStateException("Game has already started, cannot be postponed");
+        }
+
+        game.setPostponed(true);
+        game.setPostponedReason(reason);
+        gameRepository.save(game);
+
+        return gameMapper.entityToDto(game);
+    }
+
+    public GameDto suspendGame(UUID gameId, String reason) {
+        GameEntity game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+
+        if (!game.hasStarted()) {
+            throw new IllegalStateException("Game has not started, cannot be suspended");
+        }
+
+        game.setSuspended(true);
+        game.setSuspendReason(reason);
+        gameRepository.save(game);
+
+        return gameMapper.entityToDto(game);
+    }
+
     public GameDto selectStartTime(UUID gameId, LocalTime newTime) {
         GameEntity game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new IllegalArgumentException("Game not found"));
