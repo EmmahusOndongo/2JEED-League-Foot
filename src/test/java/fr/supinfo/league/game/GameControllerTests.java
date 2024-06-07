@@ -166,15 +166,20 @@ public class GameControllerTests {
     @Test
     void whenReportMatch_givenMemberLeague() throws Exception {
         // Given
-        UUID gameId = UUID.randomUUID(); // Generate a random UUID
+        MatchDayEntity matchDay = new MatchDayEntity();
+        matchDay.setId(UUID.fromString("ac05477e-60e0-4c07-9455-6929c1b4c169"));
+        matchDay.setDate(LocalDate.now().plusDays(5));
+        this.matchDayRepository.save(matchDay);
+
+        UUID gameId = UUID.fromString("ac05477e-60e0-4c07-9455-6929c1b4c169"); // Fixed UUID
         GameEntity game = new GameEntity();
-        game.setId(gameId); // Use the same UUID for saving
+        game.setId(gameId);
         game.setDescription("Game to be reported");
-        game.setStartTime(LocalTime.now().plusHours(1)); // Match not started
-        game.setEndTime(LocalTime.now().plusHours(3));
-        game.setMatchDayId(UUID.randomUUID());
-        game.setHomeTeamId(UUID.randomUUID());
-        game.setVisitorTeamId(UUID.randomUUID());
+        game.setStartTime(LocalTime.of(17, 15, 15));
+        game.setEndTime(LocalTime.of(21, 45, 55));
+        game.setMatchDayId(matchDay.getId());
+        game.setHomeTeamId(UUID.fromString("22f8841b-c1c3-49e2-9e08-8884ca1ff9c0"));
+        game.setVisitorTeamId(UUID.fromString("5b6bbd96-3b0c-4b34-aeaf-e001d0e1f0da"));
         this.gameRepository.save(game);
 
         String reason = "{\"reason\":\"Inclement weather\"}";
@@ -190,6 +195,7 @@ public class GameControllerTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.isPostponed").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.postponedReason").value("Inclement weather"));
     }
+
 
     @WithMockUser(roles = {"MEMBER-LEAGUE"})
     @Test
