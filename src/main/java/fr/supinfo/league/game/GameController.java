@@ -1,5 +1,6 @@
 package fr.supinfo.league.game;
 
+import fr.supinfo.league.game.comment.CommentDto;
 import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -37,5 +38,11 @@ public class GameController {
     @PutMapping("/{gameId}/end-time")
     public GameDto selectEndTime(@PathVariable UUID gameId, @RequestBody LocalTime newTime) {
         return this.gameServices.selectEndTime(gameId, newTime);
+    }
+
+    @RolesAllowed({"ADMIN", "JOURNALIST"})
+    @PostMapping("/{gameId}/comments")
+    public CommentDto addCommentToGame(@PathVariable UUID gameId, @RequestBody CommentDto commentDto) {
+        return this.gameServices.addCommentToGame(gameId, commentDto);
     }
 }

@@ -1,5 +1,8 @@
 package fr.supinfo.league.game;
 
+import fr.supinfo.league.game.comment.CommentDto;
+import fr.supinfo.league.game.comment.CommentEntity;
+import fr.supinfo.league.game.comment.CommentRepository;
 import fr.supinfo.league.season.matchday.MatchDayServices;
 import fr.supinfo.league.team.TeamServices;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +16,7 @@ import java.util.*;
 @Service
 public class GameServices {
     private final GameRepository gameRepository;
+    private final CommentRepository commentRepository;
     private final GameMapper gameMapper;
 
     private final MatchDayServices matchDayServices;
@@ -75,5 +79,25 @@ public class GameServices {
         gameRepository.save(game);
 
         return gameMapper.entityToDto(game);
+    }
+
+    public CommentDto addCommentToGame(UUID gameId, CommentDto commentDto) {
+        Optional<GameEntity> optionalGame = gameRepository.findById(gameId);
+
+        if (optionalGame.isPresent()) {
+            GameEntity game = optionalGame.get();
+            CommentEntity commentEntity = new CommentEntity();
+            commentEntity.setContent(commentDto.content());
+            commentEntity.setAuthor(commentDto.author());
+            commentEntity.setGame(game);
+
+            commentEntity = commentRepository.save(commentEntity);
+            game.getComments().add(commentEntity);
+            gameRepository.save(game);
+
+            return GameMapper.toCommentDto(commentEntity);
+        } else {
+            throw new RuntimeException("Game not found with ID: " + gameId);
+        }
     }
 }
