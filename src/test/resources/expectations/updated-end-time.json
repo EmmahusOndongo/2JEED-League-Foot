@@ -1,0 +1,10 @@
+{
+  "id": "game-id-value",
+  "description": "Game for journalist end time test",
+  "startTime": "15:15:15",
+  "endTime": "18:40:10",
+  "matchDayId": "match-day-id-value",
+  "homeTeamId": "home-team-id-value",
+  "visitorTeamId": "visitor-team-id-value",
+  "comments": []
+}

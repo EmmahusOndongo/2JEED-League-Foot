@@ -1,14 +1,10 @@
 package fr.supinfo.league.game;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class TimeDto {
     private String newTime;
-
-    // getters and setters
-    public String getNewTime() {
-        return newTime;
-    }
-
-    public void setNewTime(String newTime) {
-        this.newTime = newTime;
-    }
 }

@@ -50,6 +50,38 @@ public class GameControllerJournalistTests {
                 .build();
     }
 
+    @WithMockUser
+    @Test
+    void selectNewStartTime_givenBasicUser() throws Exception {
+        // Given
+        MatchDayEntity matchDay = new MatchDayEntity();
+        matchDay.setId(UUID.randomUUID());
+        matchDay.setDate(LocalDate.now().plusDays(5));
+        this.matchDayRepository.save(matchDay);
+
+        UUID gameId = UUID.randomUUID();
+        GameEntity game = new GameEntity();
+        game.setId(gameId);
+        game.setDescription("Game for basic user permission test");
+        game.setStartTime(LocalTime.of(15, 15, 15));
+        game.setEndTime(LocalTime.of(18, 40, 10));
+        game.setMatchDayId(matchDay.getId());
+        game.setHomeTeamId(UUID.randomUUID());
+        game.setVisitorTeamId(UUID.randomUUID());
+        this.gameRepository.save(game);
+
+        String newStartTime = Files.readString(Path.of("src", "test", "resources", "inputs", "game-start-time-update.json"));
+
+        // When
+        ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(TESTED_URL + "/" + gameId + "/start-time")
+                .content(newStartTime)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        resultActions.andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
     @WithMockUser(roles = {"JOURNALIST"})
     @Test
     void selectNewStartTime_givenJournalist() throws Exception {
@@ -70,10 +102,8 @@ public class GameControllerJournalistTests {
         game.setVisitorTeamId(UUID.randomUUID());
         this.gameRepository.save(game);
 
-        // Load new start time from file
         String newStartTime = Files.readString(Path.of("src", "test", "resources", "inputs", "game-start-time-update.json"));
 
-        // Load expected response from file
         String expectedResponse = Files.readString(Path.of("src", "test", "resources", "expectations", "updated-start-time.json"));
 
         // When
@@ -107,7 +137,6 @@ public class GameControllerJournalistTests {
         game.setVisitorTeamId(UUID.randomUUID());
         this.gameRepository.save(game);
 
-        // Load incorrect new start time from file
         String incorrectStartTime = Files.readString(Path.of("src", "test", "resources", "inputs", "incorrect-game-start-time-update.json"));
 
         // When
@@ -140,10 +169,8 @@ public class GameControllerJournalistTests {
         game.setVisitorTeamId(UUID.randomUUID());
         this.gameRepository.save(game);
 
-        // Load new end time from file
         String newEndTime = Files.readString(Path.of("src", "test", "resources", "inputs", "game-end-time-update.json"));
 
-        // Load expected response from file
         String expectedResponse = Files.readString(Path.of("src", "test", "resources", "expectations", "updated-end-time.json"));
 
         // When
@@ -155,6 +182,38 @@ public class GameControllerJournalistTests {
         // Then
         resultActions.andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
+    }
+
+    @WithMockUser
+    @Test
+    void selectNewEndTime_givenBasicUser() throws Exception {
+        // Given
+        MatchDayEntity matchDay = new MatchDayEntity();
+        matchDay.setId(UUID.randomUUID());
+        matchDay.setDate(LocalDate.now().plusDays(5));
+        this.matchDayRepository.save(matchDay);
+
+        UUID gameId = UUID.randomUUID();
+        GameEntity game = new GameEntity();
+        game.setId(gameId);
+        game.setDescription("Game for basic user end time test");
+        game.setStartTime(LocalTime.of(15, 15, 15));
+        game.setEndTime(LocalTime.of(18, 40, 10));
+        game.setMatchDayId(matchDay.getId());
+        game.setHomeTeamId(UUID.randomUUID());
+        game.setVisitorTeamId(UUID.randomUUID());
+        this.gameRepository.save(game);
+
+        String newEndTime = Files.readString(Path.of("src", "test", "resources", "inputs", "game-end-time-update.json"));
+
+        // When
+        ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(TESTED_URL + "/" + gameId + "/end-time")
+                .content(newEndTime)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        resultActions.andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
     @WithMockUser(roles = {"JOURNALIST"})
@@ -177,7 +236,6 @@ public class GameControllerJournalistTests {
         game.setVisitorTeamId(UUID.randomUUID());
         this.gameRepository.save(game);
 
-        // Load incorrect new end time from file
         String incorrectEndTime = Files.readString(Path.of("src", "test", "resources", "inputs", "incorrect-game-end-time-update.json"));
 
         // When
@@ -189,4 +247,72 @@ public class GameControllerJournalistTests {
         // Then
         resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @WithMockUser
+    @Test
+    void addCommentToGame_givenBasicUser() throws Exception {
+        // Given
+        MatchDayEntity matchDay = new MatchDayEntity();
+        matchDay.setId(UUID.randomUUID());
+        matchDay.setDate(LocalDate.now().plusDays(5));
+        this.matchDayRepository.save(matchDay);
+
+        UUID gameId = UUID.randomUUID();
+        GameEntity game = new GameEntity();
+        game.setId(gameId);
+        game.setDescription("Game for comment test");
+        game.setStartTime(LocalTime.of(15, 15, 15));
+        game.setEndTime(LocalTime.of(18, 40, 10));
+        game.setMatchDayId(matchDay.getId());
+        game.setHomeTeamId(UUID.randomUUID());
+        game.setVisitorTeamId(UUID.randomUUID());
+        this.gameRepository.save(game);
+
+        String newComment = Files.readString(Path.of("src", "test", "resources", "inputs", "new-comment.json"));
+
+        // When
+        ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.post(TESTED_URL + "/" + gameId + "/comments")
+                .content(newComment)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        resultActions.andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @WithMockUser(roles = {"JOURNALIST"})
+    @Test
+    void addCommentToGame_givenJournalist() throws Exception {
+        // Given
+        MatchDayEntity matchDay = new MatchDayEntity();
+        matchDay.setId(UUID.randomUUID());
+        matchDay.setDate(LocalDate.now().plusDays(5));
+        this.matchDayRepository.save(matchDay);
+
+        UUID gameId = UUID.randomUUID();
+        GameEntity game = new GameEntity();
+        game.setId(gameId);
+        game.setDescription("Game for comment test");
+        game.setStartTime(LocalTime.of(15, 15, 15));
+        game.setEndTime(LocalTime.of(18, 40, 10));
+        game.setMatchDayId(matchDay.getId());
+        game.setHomeTeamId(UUID.randomUUID());
+        game.setVisitorTeamId(UUID.randomUUID());
+        this.gameRepository.save(game);
+
+        String newComment = Files.readString(Path.of("src", "test", "resources", "inputs", "new-comment.json"));
+
+        String expectedResponse = Files.readString(Path.of("src", "test", "resources", "expectations", "added-comment.json"));
+
+        // When
+        ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.post(TESTED_URL + "/" + gameId + "/comments")
+                .content(newComment)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
+    }
+
 }

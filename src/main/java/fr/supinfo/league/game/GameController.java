@@ -44,10 +44,10 @@ public class GameController {
         return this.gameServices.selectStartTime(gameId, LocalTime.parse(newTimeDto.getNewTime()));
     }
 
-    @RolesAllowed({"ADMIN", "JOURNALIST"})
     @PutMapping("/{gameId}/end-time")
-    public GameDto selectEndTime(@PathVariable UUID gameId, @RequestBody LocalTime newTime) {
-        return this.gameServices.selectEndTime(gameId, newTime);
+    @RolesAllowed({"ADMIN", "JOURNALIST"})
+    public GameDto selectEndTime(@PathVariable UUID gameId, @RequestBody TimeDto newTimeDto) {
+        return this.gameServices.selectEndTime(gameId, LocalTime.parse(newTimeDto.getNewTime()));
     }
 
     @RolesAllowed({"ADMIN", "JOURNALIST"})
