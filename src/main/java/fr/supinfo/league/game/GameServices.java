@@ -56,4 +56,19 @@ public class GameServices {
 
         return gameMapper.entityToDto(game);
     }
+
+    public GameDto suspendGame(UUID gameId, String reason) {
+        GameEntity game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+
+        if (!game.hasStarted()) {
+            throw new IllegalStateException("Game has not started, cannot be suspended");
+        }
+
+        game.setSuspended(true);
+        game.setSuspendReason(reason);
+        gameRepository.save(game);
+
+        return gameMapper.entityToDto(game);
+    }
 }

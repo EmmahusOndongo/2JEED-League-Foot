@@ -31,4 +31,9 @@ public class GameController {
     public GameDto reportGame(@PathVariable UUID gameId, @RequestBody ReportReasonDto reportReasonDto) {
         return this.gameServices.reportGame(gameId, reportReasonDto.reason());
     }
+    @PutMapping("/{gameId}/suspend")
+    @RolesAllowed("MEMBER-LEAGUE")
+    public GameDto suspendGame(@PathVariable UUID gameId, @RequestBody SuspendReasonDto suspendReasonDto) {
+        return this.gameServices.suspendGame(gameId, suspendReasonDto.reason());
+    }
 }

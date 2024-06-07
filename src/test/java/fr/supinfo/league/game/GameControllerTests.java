@@ -217,4 +217,62 @@ public class GameControllerTests {
         // Then
         resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @WithMockUser(roles = {"MEMBER-LEAGUE"})
+    @Test
+    void whenSuspendGame_givenMemberLeague() throws Exception {
+        // Given
+        UUID gameId = UUID.randomUUID();
+        GameEntity game = new GameEntity();
+        game.setId(gameId);
+        game.setDescription("Game to be suspended");
+        game.setStartTime(LocalTime.now().minusHours(1)); // Match started
+        game.setEndTime(LocalTime.now().plusHours(1));
+        game.setMatchDayId(UUID.randomUUID());
+        game.setHomeTeamId(UUID.randomUUID());
+        game.setVisitorTeamId(UUID.randomUUID());
+        game.setHasStarted(true);
+        this.gameRepository.save(game);
+
+        String reason = "{\"reason\":\"Inclement weather\"}";
+
+        // When
+        ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(TESTED_URL + "/" + gameId + "/suspend")
+                .content(reason)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.isSuspended").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.suspendReason").value("Inclement weather"));
+    }
+
+    @WithMockUser(roles = {"MEMBER-LEAGUE"})
+    @Test
+    void whenSuspendGame_givenMemberLeague_gameNotStarted() throws Exception {
+        // Given
+        UUID gameId = UUID.randomUUID();
+        GameEntity game = new GameEntity();
+        game.setId(gameId);
+        game.setDescription("Game not started");
+        game.setStartTime(LocalTime.now().plusHours(1)); // Match not started
+        game.setEndTime(LocalTime.now().plusHours(3));
+        game.setMatchDayId(UUID.randomUUID());
+        game.setHomeTeamId(UUID.randomUUID());
+        game.setVisitorTeamId(UUID.randomUUID());
+        game.setHasStarted(false);
+        this.gameRepository.save(game);
+
+        String reason = "{\"reason\":\"Inclement weather\"}";
+
+        // When
+        ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(TESTED_URL + "/" + gameId + "/suspend")
+                .content(reason)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Then
+        resultActions.andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }

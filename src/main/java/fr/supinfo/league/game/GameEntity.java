@@ -25,6 +25,8 @@ public class GameEntity {
     private boolean hasStarted;
     private boolean isPostponed;
     private String postponedReason;
+    private boolean isSuspended;
+    private String suspendReason;
 
     public boolean hasStarted() {
         return hasStarted;
