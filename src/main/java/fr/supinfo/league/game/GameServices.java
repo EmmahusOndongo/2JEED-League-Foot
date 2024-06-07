@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -40,5 +41,39 @@ public class GameServices {
         GameEntity gameEntity = this.gameMapper.dtoToEntity(game);
         GameEntity saved = this.gameRepository.save(gameEntity);
         return this.gameMapper.entityToDto(saved);
+    }
+
+    public GameDto selectStartTime(UUID gameId, LocalTime newTime) {
+        GameEntity game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+
+        LocalTime endTime = game.getEndTime();
+
+        // Vérifie si l'heure de fin est avant la nouvelle heure de début
+        if (endTime != null && endTime.isBefore(newTime)) {
+            throw new IllegalArgumentException("Invalid Start Time value");
+        }
+
+        game.setStartTime(newTime);
+        gameRepository.save(game);
+
+        return gameMapper.entityToDto(game);
+    }
+
+    public GameDto selectEndTime(UUID gameId, LocalTime newTime) {
+        GameEntity game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new IllegalArgumentException("Game not found"));
+
+        LocalTime startTime = game.getStartTime();
+
+        // Vérifie si l'heure de début est après la nouvelle heure de fin
+        if (startTime != null && newTime.isBefore(startTime)) {
+            throw new IllegalArgumentException("Invalid Start Time value");
+        }
+
+        game.setEndTime(newTime);
+        gameRepository.save(game);
+
+        return gameMapper.entityToDto(game);
     }
 }

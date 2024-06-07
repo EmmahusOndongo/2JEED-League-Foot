@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RequestMapping("/games")
@@ -19,10 +21,21 @@ public class GameController {
         return this.gameServices.getGames(date);
     }
 
-    // configure security roles using annotations https://www.baeldung.com/spring-security-method-security
     @RolesAllowed({"ADMIN"})
     @PostMapping
     public GameDto createGame(@RequestBody GameDto game) {
         return this.gameServices.createGame(game);
+    }
+
+    @RolesAllowed({"ADMIN", "JOURNALIST"})
+    @PutMapping("/{gameId}/start-time")
+    public GameDto selectStartTime(@PathVariable UUID gameId, @RequestBody LocalTime newTime) {
+        return this.gameServices.selectStartTime(gameId, newTime);
+    }
+
+    @RolesAllowed({"ADMIN", "JOURNALIST"})
+    @PutMapping("/{gameId}/end-time")
+    public GameDto selectEndTime(@PathVariable UUID gameId, @RequestBody LocalTime newTime) {
+        return this.gameServices.selectEndTime(gameId, newTime);
     }
 }
